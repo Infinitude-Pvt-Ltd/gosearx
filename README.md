@@ -69,30 +69,30 @@ graph TD
   Normalizes URLs dynamically (removing tracking query params like `utm_` or `gclid`) and merges duplicate result cards while preserving the most descriptive title and content snippet.
 * **Engine Registry**: Modular architecture supporting HTML scraping and API integration (Google, Bing, DuckDuckGo, Brave, Yahoo, Wikipedia, Grokipedia).
 
-### 2. SearXNG In-Query Syntax Parity
+### 2. [SearXNG In-Query Syntax Parity](file:///Volumes/Transend/Build/Experimental/contents/gosearx/docs/features/query_parsing.md)
 * **Engine & Shortcut Overrides (`!engine` / `!shortcut`)**: e.g., `!w space` routes search exclusively to Wikipedia, bypassing the categories engine.
 * **Thematic Category Overrides (`!!category`)**: e.g., `!!science space` restricts queries to engines in the `science` category.
 * **Language Overrides (`:language`)**: e.g., `quantum computing :fr` dynamically forces French localization rules.
 * **Negative Exclusions Backend Pruning (`-term`)**: e.g., `quantum -physics`. Result cards are filtered out at the GoSearX scoring level if titles or snippets contain case-insensitive excluded words.
 
-### 3. Production-Grade Anti-Blocking & Proxy Rotation
+### 3. [Production-Grade Anti-Blocking & Proxy Rotation](file:///Volumes/Transend/Build/Experimental/contents/gosearx/docs/features/proxy_rotator.md)
 * **Dynamic Headless Chrome Layer (`chromedp`)**: Employs an automated, fingerprint-masked headless browser rendering engine for dynamic SPA web pages.
 * **Proxy Rotator Pool**: Fans out concurrent requests through a pool of configured HTTP/HTTPS/SOCKS5 proxies.
 * **Self-Healing Proxy Failover (`FailoverTransport`)**: Intercepts networking failures (timeouts, `502`, `504`) and automatically retries requests using alternate proxies from the pool.
 * **HTTP/2 Upgrades**: Forces HTTP/2 multiplexing (`ForceAttemptHTTP2`) across all proxy handshakes to improve speeds and match organic client behavior.
 * **Tor Integration**: Configurable isolation routing via local Tor SOCKS5 proxies for restricted search engines.
 
-### 4. Advanced Bot Limiter Shield
+### 4. [Advanced Bot Limiter Shield](file:///Volumes/Transend/Build/Experimental/contents/gosearx/docs/features/rate_limiter.md)
 * **Sliding Window Rate Limiter**: High-performance middleware (`LimitRate`) restricting client traffic to **5 requests per 10 seconds** per client IP.
 * **Flexible Cache Backends**: Powered by either a thread-safe local `InMemoryCache` (with a janitor eviction routine) or a premium `RedisCache` cluster.
 * **Auth-Shield**: Strict token-based Bearer authentication (`RequireAuth` middleware).
 
-### 5. High-Performance Bulk Search Endpoint (`POST /search/bulk`)
+### 5. [High-Performance Bulk Search Endpoint (POST /search/bulk)](file:///Volumes/Transend/Build/Experimental/contents/gosearx/docs/features/bulk_search.md)
 * **DRY Architecture**: Refactored query execution into a reusable `SearchSingle` method.
 * **Parallel Query Fan-Out**: Processes lists of queries in concurrent Goroutines synchronized via `sync.WaitGroup` and a thread-safe `sync.Mutex`.
 * **Rate-Limit Bypass**: Allows clients to execute dozens of concurrent query searches in a single HTTP request round-trip, fanning them out across different rotated proxy IPs simultaneously.
 
-### 6. Automated Markdown Content Crawler (`POST /crawl`)
+### 6. [Automated Markdown Content Crawler (POST /crawl)](file:///Volumes/Transend/Build/Experimental/contents/gosearx/docs/features/crawler.md)
 * **Smart Article Extraction**: Utilizes `go-readability` and DOM selectors to pull clean article payloads from target URLs in parallel.
 * **LLM-Ready Markdown Conversion**: Integrates a structural converter (`html-to-markdown`) with Crawl4AI whitespace-cleaning rules (collapsing duplicate lines, pruning empty list bullet lines).
 

@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/PuerkitoBio/goquery"
+	"github.com/chromedp/cdproto/network"
 	"github.com/chromedp/cdproto/page"
 	"github.com/chromedp/chromedp"
 	"gosearx/config"
@@ -95,6 +96,21 @@ func (s *ScraperEngine) SearchDynamic(ctx context.Context, targetURL string) (st
 		_, err := page.AddScriptToEvaluateOnNewDocument("delete navigator.__proto__.webdriver;").Do(ctx)
 		return err
 	}))
+
+	// Bypass Google Consent Redirect Page inside Headless session by injecting consent cookies
+	if strings.Contains(targetURL, "google.com") {
+		tasks = append(tasks, chromedp.ActionFunc(func(ctx context.Context) error {
+			err := network.SetCookie("CONSENT", "YES+").WithDomain(".google.com").WithPath("/").Do(ctx)
+			if err != nil {
+				return err
+			}
+			err = network.SetCookie("SOCS", "CoYBOA").WithDomain(".google.com").WithPath("/").Do(ctx)
+			if err != nil {
+				return err
+			}
+			return nil
+		}))
+	}
 
 	// Navigation
 	tasks = append(tasks, chromedp.Navigate(targetURL))

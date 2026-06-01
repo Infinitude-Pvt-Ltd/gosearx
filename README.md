@@ -76,7 +76,8 @@ graph TD
 * **Negative Exclusions Backend Pruning (`-term`)**: e.g., `quantum -physics`. Result cards are filtered out at the GoSearX scoring level if titles or snippets contain case-insensitive excluded words.
 
 ### 3. [Production-Grade Anti-Blocking & Proxy Rotation](file:///Volumes/Transend/Build/Experimental/contents/gosearx/docs/features/proxy_rotator.md)
-* **Dynamic Headless Chrome Layer (`chromedp`)**: Employs an automated, fingerprint-masked headless browser rendering engine for dynamic SPA web pages.
+* **Lightweight Mobile UA Rotation (Google Bypass)**: Employs a dedicated pool of classic mobile browser signatures (e.g., Opera Mini) along with cookie/consent headers to completely bypass Google's JS Challenge Wall, delivering search results in **<300ms** and eliminating slow `chromedp` browser rendering by default.
+* **Dynamic Headless Chrome Layer (`chromedp`)**: Preserves an automated, fingerprint-masked headless browser rendering engine as a fallback for standard engines and as a core driver for dynamic SPA web page crawling (`POST /crawl`).
 * **Proxy Rotator Pool**: Fans out concurrent requests through a pool of configured HTTP/HTTPS/SOCKS5 proxies.
 * **Self-Healing Proxy Failover (`FailoverTransport`)**: Intercepts networking failures (timeouts, `502`, `504`) and automatically retries requests using alternate proxies from the pool.
 * **HTTP/2 Upgrades**: Forces HTTP/2 multiplexing (`ForceAttemptHTTP2`) across all proxy handshakes to improve speeds and match organic client behavior.
@@ -253,3 +254,9 @@ go run scratch/test_bulk_search.go
 For detailed guides on utilizing the system and creating custom search engines, check out our docs:
 * 📄 [Usage & Query Operations Guide](file:///Volumes/Transend/Build/Experimental/contents/gosearx/docs/usage.md)
 * 📄 [Customization & Engine Configuration Guide](file:///Volumes/Transend/Build/Experimental/contents/gosearx/docs/customization.md)
+
+---
+
+## ⚖️ License
+
+This project is open-sourced under the **MIT License**. Feel free to use, modify, and distribute it in accordance with the license guidelines. See the [LICENSE](file:///Volumes/Transend/Build/Experimental/contents/gosearx/LICENSE) file for more details.

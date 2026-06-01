@@ -31,5 +31,9 @@ Thumbs.db
 
 # Temporary Logs and Cache
 *.log
+*.html
 /cache_temp/
 /tmp/
+/scratch/debug_google_selectors.go
+/scratch/test_opera_mini.go
+/scratch/test_user_agents.go

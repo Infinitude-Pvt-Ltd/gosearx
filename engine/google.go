@@ -14,6 +14,14 @@ import (
 	"gosearx/scoring"
 )
 
+var googleMobileUserAgents = []string{
+	"Opera/9.80 (Android; Opera Mini/36.1.2254/119.132; U; en) Presto/2.12.423 Version/12.16",
+	"Opera/9.80 (Android; Opera Mini/36.1.2254/119.132; U; en-GB) Presto/2.12.423 Version/12.16",
+	"Opera/9.80 (Android; Opera Mini/28.0.2254/119.132; U; en) Presto/2.12.423 Version/12.16",
+	"Opera/9.80 (J2ME/MIDP; Opera Mini/9.80 (S60; SymbOS; Opera Mobi/23.348; U; en) Presto/2.5.25 Version/10.54",
+	"Opera/9.80 (J2ME/MIDP; Opera Mini/4.5.33867/119.132; U; en) Presto/2.12.423 Version/12.16",
+}
+
 type GoogleEngine struct {
 	*ScraperEngine
 }
@@ -41,14 +49,6 @@ func (g *GoogleEngine) Search(ctx context.Context, query string, opts SearchOpti
 	formattedURL = strings.ReplaceAll(formattedURL, "{language}", url.QueryEscape(lang))
 	formattedURL = strings.ReplaceAll(formattedURL, "{country}", url.QueryEscape(country))
 
-	// Append localization restrict rules to enforce search territories like SearXNG does
-	if lang != "" {
-		formattedURL += "&lr=lang_" + url.QueryEscape(lang)
-	}
-	if country != "" {
-		formattedURL += "&cr=country" + url.QueryEscape(strings.ToUpper(country))
-	}
-
 	if g.usingJSRender {
 		html, err := g.SearchDynamic(ctx, formattedURL)
 		if err != nil {
@@ -71,18 +71,10 @@ func (g *GoogleEngine) Search(ctx context.Context, query string, opts SearchOpti
 			return nil, fmt.Errorf("failed to create google request: %w", err)
 		}
 
-		// 2. Browser emulation headers
-		req.Header.Set("User-Agent", userAgents[rand.Intn(len(userAgents))])
-		req.Header.Set("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8")
+		// 2. Browser emulation headers - Optimized for lightweight mobile search page
+		req.Header.Set("User-Agent", googleMobileUserAgents[rand.Intn(len(googleMobileUserAgents))])
+		req.Header.Set("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
 		req.Header.Set("Accept-Language", "en-US,en;q=0.9")
-		req.Header.Set("Referer", "https://www.google.com/")
-		req.Header.Set("Upgrade-Insecure-Requests", "1")
-		req.Header.Set("Sec-Ch-Ua", `"Not_A Brand";v="8", "Chromium";v="120", "Google Chrome";v="120"`)
-		req.Header.Set("Sec-Ch-Ua-Mobile", "?0")
-		req.Header.Set("Sec-Ch-Ua-Platform", `"Windows"`)
-		req.Header.Set("Sec-Fetch-Dest", "document")
-		req.Header.Set("Sec-Fetch-Mode", "navigate")
-		req.Header.Set("Sec-Fetch-Site", "same-origin")
 		
 		// 3. Inject GDPR consent cookies to bypass Google's consent wall redirect
 		req.Header.Set("Cookie", "CONSENT=YES+; SOCS=CoYBOA")

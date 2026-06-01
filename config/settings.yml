@@ -23,7 +23,7 @@ outgoing:
   #   - "http://127.0.0.1:8080"
   #   - "socks5://127.0.0.1:1080"
   proxies:
-    # - "http://6782f138051b97e4448c:f45c7acbf461fb46@gw.dataimpulse.com:823"
+    - "http://6782f138051b97e4448c:f45c7acbf461fb46@gw.dataimpulse.com:823"
     # - "http://username:password@proxy-provider-ip2:port"
     # - "socks5://username:password@proxy-provider-ip3:port"
   # Tor SOCKS5 proxy configuration (routes engines having using_tor_proxy: true)
@@ -35,16 +35,16 @@ engines:
     weight: 1.0
     categories: ["general"]
     search_url: "https://www.google.com/search?q={query}&num=20&hl={language}&gl={country}"
-    timeout: 4.5
+    timeout: 2.0
     disabled: false
     using_tor_proxy: false
-    using_js_render: true
+    using_js_render: false
     # Ordered fallback rules for class name changes
     selectors:
-      result: ["div.g", "div.MjjYud", "div.v7W49e"]
-      title: ["h3", "h3.LC20lb", "span.title"]
+      result: ["div.g", "div.MjjYud", "div.v7W49e", "div.Gx5Zad"]
+      title: ["h3", "h3.LC20lb", "span.title", "div.BNeawe.deC31e.AP7Wnd"]
       url: ["a", "a[href]"]
-      content: ["div.VwiC3b", "div.yD3NFf", "span.st"]
+      content: ["div.VwiC3b", "div.yD3NFf", "span.st", "div.s3V9rc", "div.BNeawe.s3V9rc", "div.BNeawe"]
 
   - name: bing
     type: html

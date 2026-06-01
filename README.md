@@ -1,4 +1,4 @@
-# 🚀 GoSearX: High-Performance, Privacy-Respecting Metasearch Server in Go
+# 🚀 GoSearX: High-Performance, Self-Hosted Privacy Metasearch Engine in Golang (SearXNG Alternative)
 
 GoSearX is a premium, lightweight, lightning-fast metasearch engine written in Go. Drawing inspiration from **SearXNG** and **Crawl4AI**, it is engineered with asynchronous fan-out routing, robust anti-blocking protections, advanced in-query parsing, and dynamic web crawling capabilities.
 

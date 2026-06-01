@@ -4,6 +4,21 @@ GoSearX is a premium, lightweight, lightning-fast metasearch engine written in G
 
 ---
 
+## 🆚 Comparison: GoSearX vs. SearXNG
+
+GoSearX introduces key backend features, architectural optimizations, and data gathering pipelines not present in SearXNG:
+
+| Feature / Metric | 🚀 GoSearX | 🔍 SearXNG | Advantage / Why it matters |
+| :--- | :--- | :--- | :--- |
+| **Language & Footprint** | **Go** (Compiled Binary)<br>Near-zero idle memory, lightweight static executable. | **Python** (Interpreted)<br>Requires virtual envs, complex dependency management. | **High Scalability**: Deploys as a single executable with sub-millisecond goroutine scheduling. |
+| **Bulk Search Endpoints** | **Yes** (`POST /search/bulk`) | **No** | **Efficiency**: Queries multiple terms concurrently in a single HTTP request, bypassing gateway rate limit shields. |
+| **Automated LLM Web Crawler**| **Yes** (`POST /crawl`) | **No** | **RAG Integration**: Headless SPA dynamic rendering (`chromedp`) & automated Crawl4AI-grade readability-to-markdown parsing. |
+| **Self-Healing Failovers** | **Yes** (`FailoverTransport`) | **No** | **Extreme Reliability**: Intercepts blocked proxy requests (timeouts, HTTP `502`/`504`) and instantly retries on alternate proxies. |
+| **Client Connection Upgrades**| **Forced HTTP/2 Multiplexing** | **Standard HTTP/1.1 Pools** | **Performance**: Enforces parallel multiplexing even through proxy handshakes to avoid TLS signature fingerprints. |
+| **DNS Optimization** | **Local Dial Cache** | **System Resolver** | **Speed**: Eliminates redundant name resolution handshakes across concurrent engine streams. |
+
+---
+
 ## 📊 Request Execution Life-Cycle
 
 The diagram below visualizes the architectural flow of a search query through the GoSearX gateway, middleware shield, dynamic query parsing, concurrent fanning out, self-healing proxy failover, and result scoring:

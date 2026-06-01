@@ -1,0 +1,153 @@
+general:
+  debug: true
+  port: 8888
+  bind_address: "0.0.0.0"
+  api_keys:
+    - "gosearx_sec_7df2_965c_a4b9"
+  cache:
+    enabled: true
+    type: "redis"
+    ttl: 300
+    redis:
+      address: "127.0.0.1:6379"
+      password: ""
+      db: 0
+
+outgoing:
+  request_timeout: 2.0
+  max_request_timeout: 3.5
+  pool_max_idle_conns: 100
+  pool_max_conns_per_host: 20
+  # Global proxy pool (HTTP, HTTPS, SOCKS5 proxies can be listed here)
+  # Examples:
+  #   - "http://127.0.0.1:8080"
+  #   - "socks5://127.0.0.1:1080"
+  proxies:
+    # - "http://6782f138051b97e4448c:f45c7acbf461fb46@gw.dataimpulse.com:823"
+    # - "http://username:password@proxy-provider-ip2:port"
+    # - "socks5://username:password@proxy-provider-ip3:port"
+  # Tor SOCKS5 proxy configuration (routes engines having using_tor_proxy: true)
+  tor_proxy: "socks5://127.0.0.1:9050"
+
+engines:
+  - name: google
+    type: html
+    weight: 1.0
+    categories: ["general"]
+    search_url: "https://www.google.com/search?q={query}&num=20&hl={language}&gl={country}"
+    timeout: 4.5
+    disabled: false
+    using_tor_proxy: false
+    using_js_render: true
+    # Ordered fallback rules for class name changes
+    selectors:
+      result: ["div.g", "div.MjjYud", "div.v7W49e"]
+      title: ["h3", "h3.LC20lb", "span.title"]
+      url: ["a", "a[href]"]
+      content: ["div.VwiC3b", "div.yD3NFf", "span.st"]
+
+  - name: bing
+    type: html
+    weight: 0.9
+    categories: ["general"]
+    search_url: "https://www.bing.com/search?q={query}&setlang={language}&cc={country}"
+    timeout: 2.5
+    disabled: false
+    selectors:
+      result: ["li.b_algo", "div.b_algo"]
+      title: ["h2 a", "h2", "a.b_algo_title"]
+      url: ["h2 a", "a"]
+      content: ["div.b_caption p", "p.b_lineclamp2", "div.b_snippet"]
+
+  - name: duckduckgo
+    type: html
+    weight: 1.0
+    categories: ["general"]
+    search_url: "https://html.duckduckgo.com/html/?q={query}&kl={country}-{language}"
+    timeout: 2.0
+    disabled: false
+    selectors:
+      result: ["div.results_links_deep", "div.result"]
+      title: ["a.result__a", "h2.result__title"]
+      url: ["a.result__a", "a"]
+      content: ["a.result__snippet", "div.result__snippet"]
+
+  - name: brave
+    type: html
+    weight: 1.0
+    categories: ["general"]
+    search_url: "https://search.brave.com/search?q={query}&hl={language}&country={country}"
+    timeout: 2.5
+    disabled: false
+    selectors:
+      result: ["div.snippet", "div.web-results"]
+      title: ["a.title-link", "span.snippet-title", "h2"]
+      url: ["a.title-link", "a"]
+      content:
+        ["p.snippet-description", "div.snippet-content", "div.web-snippet"]
+
+  - name: wikipedia
+    type: custom
+    weight: 1.5
+    categories: ["general"]
+    disabled: false
+
+  - name: yahoo
+    type: html
+    weight: 0.9
+    categories: ["general"]
+    search_url: "https://search.yahoo.com/search?q={query}&ei=UTF-8&vc_lang={language}&fl=0"
+    timeout: 2.5
+    disabled: false
+    selectors:
+      result: ["div.dd.algo", "div.algo", "li div.compTbl"]
+      title: ["h3.title a", "h3 a", "span.title"]
+      url: ["h3.title a", "a"]
+      content: ["div.compText", "p.lh-16", "span.compText"]
+
+  - name: mojeek
+    type: html
+    weight: 0.8
+    categories: ["general"]
+    search_url: "https://www.mojeek.com/search?q={query}&fmt=html"
+    timeout: 2.0
+    disabled: false
+    selectors:
+      result: ["li.result", "div.result"]
+      title: ["a.title", "h2 a"]
+      url: ["a.title", "a"]
+      content: ["p.s", "span.desc"]
+
+  - name: ask
+    type: html
+    weight: 0.8
+    categories: ["general"]
+    search_url: "https://www.ask.com/web?q={query}"
+    timeout: 2.5
+    disabled: true
+    selectors:
+      result: ["div.PartialSearchResults-item", "div.SearchResult"]
+      title:
+        ["a.PartialSearchResults-item-title-link", "a.SearchResult-title-link"]
+      url: ["a.PartialSearchResults-item-title-link", "a"]
+      content:
+        ["p.PartialSearchResults-item-abstract", "p.SearchResult-snippet"]
+
+  - name: arxiv
+    type: html
+    weight: 1.0
+    categories: ["science", "general"]
+    search_url: "https://arxiv.org/search/?query={query}&searchtype=all&source=header"
+    timeout: 3.0
+    disabled: true
+    selectors:
+      result: ["li.arxiv-result"]
+      title: ["p.title"]
+      url: ["p.list-title a[href^='https://arxiv.org/abs']", "p.list-title a"]
+      content: ["span.abstract"]
+
+  - name: grokipedia
+    type: custom
+    weight: 1.0
+    categories: ["general"]
+    disabled: false

@@ -4,6 +4,47 @@ GoSearX is a premium, lightweight, lightning-fast metasearch engine written in G
 
 ---
 
+## 📊 Request Execution Life-Cycle
+
+The diagram below visualizes the architectural flow of a search query through the GoSearX gateway, middleware shield, dynamic query parsing, concurrent fanning out, self-healing proxy failover, and result scoring:
+
+```mermaid
+graph TD
+    A[Client Request] --> B{LimitRate Middleware}
+    B -- Limit Exceeded --> C[429 Too Many Requests]
+    B -- Under Limit --> D{RequireAuth Middleware}
+    D -- Invalid Token --> E[410 Unauthorized]
+    D -- Valid Token --> F[Search Context Controller]
+    
+    F --> G[ParseQuery Overrides & Exclusions]
+    G --> H{Cache Lookup}
+    
+    H -- Cache Hit --> I[Zero-Allocation Return]
+    H -- Cache Miss --> J[Resolve Engines & Overrides]
+    
+    J --> K[ExecuteSearchConcurrently Goroutines]
+    
+    subgraph Concurrency Fan-Out Layer
+        K --> L1[Engine Driver 1]
+        K --> L2[Engine Driver 2]
+        K --> L3[Engine Driver N]
+        
+        L1 --> M1[FailoverTransport Proxy Pool]
+        L2 --> M2[FailoverTransport Proxy Pool]
+        L3 --> M3[FailoverTransport Proxy Pool]
+    end
+    
+    M1 --> N[AggregateAndScore Ranking Aggregator]
+    M2 --> N
+    M3 --> N
+    
+    N --> O[Backend Exclusions Pruning Filter]
+    O --> P[Cache Write Layer]
+    P --> Q[Unified JSON Response]
+```
+
+---
+
 ## 🌟 Core Feature Suite
 
 ### 1. High-Performance Metasearch Concurrency
@@ -65,7 +106,7 @@ general:
   port: 8888
   bind_address: "0.0.0.0"
   api_keys:
-    - "gosearx_sec_7df2_965c_a4b9"
+    - "gosearx_sec_****_****_****"
   cache:
     enabled: true
     type: "redis" # "redis" or "inmemory"
@@ -77,8 +118,8 @@ outgoing:
   request_timeout: 2.0
   max_request_timeout: 3.5
   proxies:
-    - "http://username:password@proxy-provider-ip1:8080"
-    - "http://username:password@proxy-provider-ip2:8080"
+    - "http://u****:p****@proxy-provider-ip1:8080"
+    - "http://u****:p****@proxy-provider-ip2:8080"
   tor_proxy: "socks5://127.0.0.1:9050"
 ```
 
@@ -91,7 +132,7 @@ Submit a single search query across fanned-out engines.
 
 * **Headers**:
   ```http
-  Authorization: Bearer gosearx_sec_7df2_965c_a4b9
+  Authorization: Bearer gosearx_sec_****_****_****
   Content-Type: application/json
   ```
 * **Payload**:
@@ -111,7 +152,7 @@ Submit multiple search queries in parallel. Perfect for bulk data ingestion with
 
 * **Headers**:
   ```http
-  Authorization: Bearer gosearx_sec_7df2_965c_a4b9
+  Authorization: Bearer gosearx_sec_****_****_****
   Content-Type: application/json
   ```
 * **Payload**:
@@ -135,7 +176,7 @@ Fetch targets concurrently and extract readable content converted to clean markd
 
 * **Headers**:
   ```http
-  Authorization: Bearer gosearx_sec_7df2_965c_a4b9
+  Authorization: Bearer gosearx_sec_****_****_****
   Content-Type: application/json
   ```
 * **Payload**:
@@ -190,3 +231,10 @@ go run scratch/test_rate_limiter.go
 ```bash
 go run scratch/test_bulk_search.go
 ```
+
+---
+
+## 📖 Deep-Dive Documentation
+For detailed guides on utilizing the system and creating custom search engines, check out our docs:
+* 📄 [Usage & Query Operations Guide](file:///Volumes/Transend/Build/Experimental/contents/gosearx/docs/usage.md)
+* 📄 [Customization & Engine Configuration Guide](file:///Volumes/Transend/Build/Experimental/contents/gosearx/docs/customization.md)
